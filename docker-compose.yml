@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  db:
+    restart: always
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=qwerty123
+    ports:
+      - 5432:5432
