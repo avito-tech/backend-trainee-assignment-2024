@@ -6,5 +6,7 @@ services:
     image: postgres:15
     environment:
       - POSTGRES_PASSWORD=qwerty123
+      # TODO:
+      - POSTGRES_DB=banner
     ports:
       - 5432:5432

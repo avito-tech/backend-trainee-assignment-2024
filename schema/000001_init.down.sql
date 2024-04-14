@@ -1,7 +1,3 @@
-DROP TABLE banner_tag;
+DROP TABLE feature_tag_banner;
 
 DROP TABLE banner;
-
-DROP TABLE tag;
-
-DROP TABLE feature;

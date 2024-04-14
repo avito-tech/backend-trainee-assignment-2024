@@ -1,28 +1,15 @@
-CREATE TABLE tag (
-	id bigserial PRIMARY KEY,
-	created_at timestamptz NOT NULL DEFAULT now()
+create table banner (
+	id			bigserial	primary key,
+	content		jsonb		not null,
+	is_active	boolean		not null,
+	created_at	timestamptz not null	default now(),
+	updated_at	timestamptz not null	default now()
 );
 
-CREATE TABLE feature (
-	id bigserial PRIMARY KEY,
-	created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE banner (
-	id bigserial PRIMARY KEY,
-	feature_id bigint NOT NULL,
-	content jsonb NOT NULL,
-	is_active boolean NOT NULL,
-	created_at timestamptz NOT NULL DEFAULT now(),
-	updated_at timestamptz NOT NULL DEFAULT now(),
-    FOREIGN KEY (feature_id) REFERENCES feature (id)
-);
-
-CREATE TABLE banner_tag (
-	tag_id bigint NOT NULL,
-	banner_id bigint NOT NULL,
-	created_at timestamptz NOT NULL DEFAULT now(),
-	PRIMARY KEY (tag_id, banner_id),
-    FOREIGN KEY (tag_id) REFERENCES tag (id),
-    FOREIGN KEY (banner_id) REFERENCES banner (id)
+create table feature_tag_banner (
+	feature_id	bigint		not null,
+	tag_id		bigint		not null,
+	banner_id	bigint		not null	references banner (id),
+	created_at	timestamptz	not null	default now(),
+	primary key (feature_id, tag_id)
 );

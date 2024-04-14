@@ -3,12 +3,28 @@ package models
 import "time"
 
 type (
+	DBBanner struct {
+		BannerID  int64     `db:"id"`
+		Content   string    `db:"content"`
+		IsActive  bool      `db:"is_active"`
+		CreatedAt time.Time `db:"created_at"`
+		UpdatedAt time.Time `db:"updated_at"`
+	}
+
+	DBFeatureTagBanner struct {
+		BannerID  int64 `db:"banner_id"`
+		TagID     int64 `db:"tag_id"`
+		FeatureID int64 `db:"feature_id"`
+	}
+)
+
+type (
 	BannerContent map[string]interface{}
 
 	Banner struct {
-		BannerID  int           `json:"banner_id"`
-		TagIDs    []int         `json:"tag_ids"`
-		FeatureID int           `json:"feature_id"`
+		BannerID  int64         `json:"banner_id"`
+		TagIDs    []int64       `json:"tag_ids"`
+		FeatureID int64         `json:"feature_id"`
 		Content   BannerContent `json:"content"`
 		IsActive  bool          `json:"is_active"`
 		CreatedAt time.Time     `json:"created_at"`
@@ -16,15 +32,15 @@ type (
 	}
 
 	CreateBanner struct {
-		TagIDs    []int         `json:"tag_ids"`
-		FeatureID int           `json:"feature_id"`
-		Content   BannerContent `json:"content"`
-		IsActive  bool          `json:"is_active"`
+		TagIDs    *[]int64       `json:"tag_ids" binding:"required,min=1"`
+		FeatureID *int64         `json:"feature_id" binding:"required"`
+		Content   *BannerContent `json:"content" binding:"required"`
+		IsActive  *bool          `json:"is_active" binding:"required"`
 	}
 
 	UpdateBanner struct {
-		TagIDs    *[]int         `json:"tag_ids"`
-		FeatureID *int           `json:"feature_id"`
+		TagIDs    *[]int64       `json:"tag_ids"`
+		FeatureID *int64         `json:"feature_id"`
 		Content   *BannerContent `json:"content"`
 		IsActive  *bool          `json:"is_active"`
 	}
@@ -35,27 +51,16 @@ type (
 
 	// GET /user_banner
 	UserBannerGetResp200 BannerContent
-	UserBannerGetResp400 ErrorResp
-	UserBannerGetResp500 ErrorResp
 
 	// GET /banner
 	BannerGetResp200 []Banner
-	BannerGetResp500 ErrorResp
 
 	// POST /banner
 	BannerPostReq     CreateBanner
 	BannerPostResp201 struct {
-		BannerID int `json:"banner_id"`
+		BannerID int64 `json:"banner_id"`
 	}
-	BannerPostResp400 ErrorResp
-	BannerPostResp500 ErrorResp
 
 	// PATCH /banner/{id}
-	BannerIdPatchReq     UpdateBanner
-	BannerIdPatchResp400 ErrorResp
-	BannerIdPatchResp500 ErrorResp
-
-	// DELETE /banner/{id}
-	BannerIdDeleteResp400 ErrorResp
-	BannerIdDeleteResp500 ErrorResp
+	BannerIdPatchReq UpdateBanner
 )

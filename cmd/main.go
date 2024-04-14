@@ -7,18 +7,17 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	server "gta2024"
 	"gta2024/pkg/handler"
+	"gta2024/pkg/repository"
 	"gta2024/pkg/service"
 )
 
 func main() {
-
-	logrus.SetFormatter(new(logrus.JSONFormatter))
-
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
@@ -27,8 +26,21 @@ func main() {
 		logrus.Fatalf("error loading env variables: %s", err.Error())
 	}
 
-	srvc := service.NewService()
-	handlers := handler.NewHandler(srvc)
+	db, err := repository.NewPostgresDB(repository.Config{
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		DBName:   viper.GetString("db.dbname"),
+		SSLMode:  viper.GetString("db.sslmode"),
+		Password: os.Getenv("DB_PASSWORD"),
+	})
+	if err != nil {
+		logrus.Fatalf("error connecting db %s", err.Error())
+	}
+
+	repos := repository.NewRepository()
+	services := service.NewService(db, repos)
+	handlers := handler.NewHandler(services)
 
 	srv := new(server.Server)
 	go func() {
