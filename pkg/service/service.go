@@ -9,6 +9,7 @@ import (
 
 type Authorization interface {
 	GenerateToken(role string) (string, error)
+	ParseToken(token string) (string, error)
 }
 
 type UserBanner interface {

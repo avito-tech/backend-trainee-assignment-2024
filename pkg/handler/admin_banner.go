@@ -13,6 +13,7 @@ import (
 
 // GetBanners godoc
 //
+//	@Security JWT
 //	@Summary		Получение всех баннеров c фильтрацией по фиче и/или тегу
 //	@Description	Get banners
 //	@Tags			admin
@@ -44,6 +45,7 @@ func (h *Handler) GetBanners(c *gin.Context) {
 
 // CreateBanner godoc
 //
+//	@Security JWT
 //	@Summary		Создание нового баннера
 //	@Description	Create banner
 //	@Tags			admin
@@ -79,6 +81,7 @@ func (h *Handler) CreateBanner(c *gin.Context) {
 
 // UpdateBanner godoc
 //
+//	@Security JWT
 //	@Summary		Обновление содержимого баннера
 //	@Description	Update banner
 //	@Tags			admin
@@ -127,6 +130,7 @@ func (h *Handler) UpdateBanner(c *gin.Context) {
 
 // DeleteBanner godoc
 //
+//	@Security JWT
 //	@Summary		Удаление баннера по идентификатору
 //	@Description	Delete banner
 //	@Tags			admin

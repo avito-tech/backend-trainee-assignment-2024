@@ -150,6 +150,8 @@ paths:
           description: Internal Error
           schema:
             $ref: '#/definitions/models.ErrorResp'
+      security:
+      - JWT: []
       summary: Получение всех баннеров c фильтрацией по фиче и/или тегу
       tags:
       - admin
@@ -191,6 +193,8 @@ paths:
           description: Internal Error
           schema:
             $ref: '#/definitions/models.ErrorResp'
+      security:
+      - JWT: []
       summary: Создание нового баннера
       tags:
       - admin
@@ -232,6 +236,8 @@ paths:
           description: Internal Error
           schema:
             $ref: '#/definitions/models.ErrorResp'
+      security:
+      - JWT: []
       summary: Удаление баннера по идентификатору
       tags:
       - admin
@@ -282,6 +288,8 @@ paths:
           description: Internal Error
           schema:
             $ref: '#/definitions/models.ErrorResp'
+      security:
+      - JWT: []
       summary: Обновление содержимого баннера
       tags:
       - admin
@@ -332,7 +340,14 @@ paths:
           description: Internal Error
           schema:
             $ref: '#/definitions/models.ErrorResp'
+      security:
+      - JWT: []
       summary: Получение баннера для пользователя
       tags:
       - user
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

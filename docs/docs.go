@@ -65,6 +65,11 @@ const docTemplate = `{
         },
         "/banner": {
             "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Get banners",
                 "consumes": [
                     "application/json"
@@ -133,6 +138,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Create banner",
                 "consumes": [
                     "application/json"
@@ -197,6 +207,11 @@ const docTemplate = `{
         },
         "/banner/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Delete banner",
                 "consumes": [
                     "application/json"
@@ -257,6 +272,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Update banner",
                 "consumes": [
                     "application/json"
@@ -334,6 +354,11 @@ const docTemplate = `{
         },
         "/user_banner": {
             "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Get user banners",
                 "consumes": [
                     "application/json"
@@ -514,6 +539,13 @@ const docTemplate = `{
                     }
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

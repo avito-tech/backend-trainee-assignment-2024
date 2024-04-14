@@ -17,8 +17,11 @@ import (
 	"gta2024/pkg/service"
 )
 
-//	@title		GTA2024 API
-//	@version	1.0
+// @title		GTA2024 API
+// @version	1.0
+// @securityDefinitions.apikey JWT
+// @in header
+// @name Authorization
 func main() {
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error initializing configs: %s", err.Error())

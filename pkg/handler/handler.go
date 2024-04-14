@@ -22,11 +22,20 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.POST("/auth/sign-in", h.signIn)
-	r.GET("/user_banner", h.GetUserBanner)
-	r.GET("/banner", h.GetBanners)
-	r.POST("/banner", h.CreateBanner)
-	r.PATCH("/banner/:id", h.UpdateBanner)
-	r.DELETE("/banner/:id", h.DeleteBanner)
+
+	banners := r.Group("/", h.roleIdentity)
+	{
+		banners.GET("/user_banner", h.GetUserBanner)
+
+		admin := banners.Group("/", h.adminIdentity)
+		{
+			admin.GET("/banner", h.GetBanners)
+			admin.POST("/banner", h.CreateBanner)
+			admin.PATCH("/banner/:id", h.UpdateBanner)
+			admin.DELETE("/banner/:id", h.DeleteBanner)
+
+		}
+	}
 
 	return r
 }

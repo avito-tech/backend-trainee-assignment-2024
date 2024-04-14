@@ -56,6 +56,11 @@
         },
         "/banner": {
             "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Get banners",
                 "consumes": [
                     "application/json"
@@ -124,6 +129,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Create banner",
                 "consumes": [
                     "application/json"
@@ -188,6 +198,11 @@
         },
         "/banner/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Delete banner",
                 "consumes": [
                     "application/json"
@@ -248,6 +263,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Update banner",
                 "consumes": [
                     "application/json"
@@ -325,6 +345,11 @@
         },
         "/user_banner": {
             "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "Get user banners",
                 "consumes": [
                     "application/json"
@@ -505,6 +530,13 @@
                     }
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

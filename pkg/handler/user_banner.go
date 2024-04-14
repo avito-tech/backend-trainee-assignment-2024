@@ -11,6 +11,7 @@ import (
 
 // GetUserBanners godoc
 //
+//	@Security JWT
 //	@Summary		Получение баннера для пользователя
 //	@Description	Get user banners
 //	@Tags			user
@@ -29,7 +30,7 @@ import (
 func (h *Handler) GetUserBanner(c *gin.Context) {
 	var (
 		useLastRevision = false
-		isAdmin         = c.GetBool("isAdmin")
+		isAdmin         = getIsAdmin(c)
 		featureId       = parseQueryInt64Opt(c, "feature_id")
 		tagId           = parseQueryInt64Opt(c, "tag_id")
 	)
