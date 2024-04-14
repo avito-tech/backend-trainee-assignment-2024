@@ -2,11 +2,11 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger" 
 	swaggerfiles "github.com/swaggo/files"
-	
-	"gta2024/pkg/service"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	_ "gta2024/docs"
+	"gta2024/pkg/service"
 )
 
 type Handler struct {
@@ -21,6 +21,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	r := gin.New()
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.POST("/auth/sign-in", h.signIn)
 	r.GET("/user_banner", h.GetUserBanner)
 	r.GET("/banner", h.GetBanners)
 	r.POST("/banner", h.CreateBanner)

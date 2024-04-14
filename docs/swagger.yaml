@@ -1,4 +1,9 @@
 definitions:
+  models.AuthSignInResp200:
+    properties:
+      access_token:
+        type: string
+    type: object
   models.Banner:
     properties:
       banner_id:
@@ -6,7 +11,7 @@ definitions:
       content:
         $ref: '#/definitions/models.BannerContent'
       created_at:
-        example: 2023-09-21T15:30:15:00Z
+        format: date-time
         type: string
       feature_id:
         type: integer
@@ -19,8 +24,6 @@ definitions:
       updated_at:
         format: date-time
         type: string
-    required:
-    - created_at
     type: object
   models.BannerContent:
     additionalProperties: true
@@ -72,6 +75,38 @@ info:
   title: GTA2024 API
   version: "1.0"
 paths:
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Get token
+      parameters:
+      - description: Роль
+        enum:
+        - admin
+        - user
+        in: query
+        name: role
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthSignInResp200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Получение токена
+      tags:
+      - auth
   /banner:
     get:
       consumes:

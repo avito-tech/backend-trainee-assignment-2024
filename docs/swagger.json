@@ -6,6 +6,54 @@
         "version": "1.0"
     },
     "paths": {
+        "/auth/sign-in": {
+            "post": {
+                "description": "Get token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Получение токена",
+                "parameters": [
+                    {
+                        "enum": [
+                            "admin",
+                            "user"
+                        ],
+                        "type": "string",
+                        "description": "Роль",
+                        "name": "role",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthSignInResp200"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResp"
+                        }
+                    }
+                }
+            }
+        },
         "/banner": {
             "get": {
                 "description": "Get banners",
@@ -352,11 +400,16 @@
         }
     },
     "definitions": {
+        "models.AuthSignInResp200": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Banner": {
             "type": "object",
-            "required": [
-                "created_at"
-            ],
             "properties": {
                 "banner_id": {
                     "type": "integer"
@@ -366,7 +419,7 @@
                 },
                 "created_at": {
                     "type": "string",
-                    "example": "2023-09-21T15:30:15:00Z"
+                    "format": "date-time"
                 },
                 "feature_id": {
                     "type": "integer"

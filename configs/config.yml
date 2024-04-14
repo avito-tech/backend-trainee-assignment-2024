@@ -6,3 +6,6 @@ db:
     port: "5432"
     dbname: "banner"
     sslmode: "disable"
+
+jwt:
+    token_ttl: 12h
