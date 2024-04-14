@@ -9,3 +9,7 @@ db:
 
 jwt:
     token_ttl: 12h
+
+cache:
+    ttl: 5m
+    cleanupInterval: 1m

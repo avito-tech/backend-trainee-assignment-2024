@@ -18,8 +18,10 @@ func InitRouter(db *sqlx.DB) *gin.Engine {
 		SigningKey: os.Getenv("SIGNING_KEY"),
 	}
 
+	bannerCache := service.NewCache(100, 100)
+
 	repos := repository.NewRepository()
-	services := service.NewService(db, repos, authConfig)
+	services := service.NewService(db, repos, authConfig, bannerCache)
 	handlers := handler.NewHandler(services)
 	return handlers.InitRoutes()
 }

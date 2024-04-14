@@ -48,8 +48,13 @@ func main() {
 		SigningKey: os.Getenv("SIGNING_KEY"),
 	}
 
+	bannerCache := service.NewCache(
+		viper.GetDuration("cache.ttl"),
+		viper.GetDuration("cache.cleanupInterval"),
+	)
+
 	repos := repository.NewRepository()
-	services := service.NewService(db, repos, authConfig)
+	services := service.NewService(db, repos, authConfig, bannerCache)
 	handlers := handler.NewHandler(services)
 
 	srv := new(server.Server)

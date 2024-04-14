@@ -29,10 +29,10 @@ type Service struct {
 	AdminBanner
 }
 
-func NewService(db *sqlx.DB, repos *repository.Repository, authConfig AuthConfig) *Service {
+func NewService(db *sqlx.DB, repos *repository.Repository, authConfig AuthConfig, bannerCache *Cache) *Service {
 	return &Service{
 		Authorization: NewAuthService(authConfig),
-		UserBanner:    NewUserBannerService(db, repos.Banner),
+		UserBanner:    NewUserBannerService(db, repos.Banner, bannerCache),
 		AdminBanner:   NewAdminBannerService(db, repos.Banner, repos.FeatureTagBanner),
 	}
 }

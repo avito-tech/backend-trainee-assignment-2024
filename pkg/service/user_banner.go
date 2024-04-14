@@ -14,21 +14,40 @@ import (
 )
 
 type UserBannerService struct {
-	db         *sqlx.DB
-	bannerRepo repository.Banner
+	db          *sqlx.DB
+	bannerCache *Cache
+	bannerRepo  repository.Banner
 }
 
-func NewUserBannerService(db *sqlx.DB, bannerRepo repository.Banner) *UserBannerService {
-	return &UserBannerService{db: db, bannerRepo: bannerRepo}
+func NewUserBannerService(db *sqlx.DB, bannerRepo repository.Banner, bannerCache *Cache) *UserBannerService {
+	return &UserBannerService{db: db, bannerRepo: bannerRepo, bannerCache: bannerCache}
 }
 
 func (s *UserBannerService) Get(featureId int64, tagId int64, isAdmin bool, useLastRevision bool) (models.BannerContent, error) {
-	banner, err := s.bannerRepo.GetByFeatureIdTagId(s.db, featureId, tagId)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrBannerNotFound
+	var banner models.DBBanner
+	var isCacheMissing bool
+	var err error
+
+	if !useLastRevision {
+		bannerRaw, ok := s.bannerCache.Get(s.GetBannerKey(featureId, tagId))
+		if ok {
+			banner = bannerRaw.(models.DBBanner)
 		}
-		return nil, fmt.Errorf("failed get user banner: %w", err)
+		isCacheMissing = !ok
+	}
+
+	if useLastRevision || isCacheMissing {
+		logrus.Info("Cache missing or useLastRevision")
+
+		banner, err = s.bannerRepo.GetByFeatureIdTagId(s.db, featureId, tagId)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, ErrBannerNotFound
+			}
+			return nil, fmt.Errorf("failed get user banner: %w", err)
+		}
+
+		s.bannerCache.Set(s.GetBannerKey(featureId, tagId), banner, 0)
 	}
 
 	if !banner.IsActive && !isAdmin {
@@ -43,4 +62,8 @@ func (s *UserBannerService) Get(featureId int64, tagId int64, isAdmin bool, useL
 	}
 
 	return bannerContent, nil
+}
+
+func (s *UserBannerService) GetBannerKey(featureId int64, tagId int64) string {
+	return fmt.Sprintf("%d::%d", featureId, tagId)
 }
