@@ -43,13 +43,13 @@ func main() {
 		logrus.Fatalf("error connecting db %s", err.Error())
 	}
 
-	autoConfig := service.AuthConfig{
+	authConfig := service.AuthConfig{
 		TokenTTL:   viper.GetDuration("jwt.token_ttl"),
 		SigningKey: os.Getenv("SIGNING_KEY"),
 	}
 
 	repos := repository.NewRepository()
-	services := service.NewService(db, repos, autoConfig)
+	services := service.NewService(db, repos, authConfig)
 	handlers := handler.NewHandler(services)
 
 	srv := new(server.Server)

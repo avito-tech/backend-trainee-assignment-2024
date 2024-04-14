@@ -36,13 +36,15 @@ func TestSuccessCreate(t *testing.T) {
 	router := utils.InitRouter(db)
 
 	// test data
-	var featureId int64 = 1
-	tagIDs := []int64{1, 2, 3}
-	content := models.BannerContent{
-		"title": "example",
-	}
-	contentStr := "{\"title\": \"example\"}"
-	isAcive := true
+	var (
+		featureId  = int64(1)
+		tagIDs     = []int64{1, 2, 3}
+		content    = models.BannerContent{"title": "example"}
+		contentStr = "{\"title\": \"example\"}"
+		isAcive    = true
+
+		token = utils.GenerateToken(t, "admin")
+	)
 
 	// create request
 	requestBody := buildRequestBody(featureId, tagIDs, content, isAcive)
@@ -50,6 +52,7 @@ func TestSuccessCreate(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/banner", bytes.NewBuffer(requestBodyBytes))
+	utils.SetAuthToken(req, token)
 	router.ServeHTTP(w, req)
 
 	// check status
@@ -99,7 +102,7 @@ func TestSuccessCreate(t *testing.T) {
 	}
 }
 
-func TestBadRequest(t *testing.T) {
+func TestBadRequestCreate(t *testing.T) {
 	// init db
 	db, err := psql.SetUp()
 	if err != nil {
@@ -111,6 +114,7 @@ func TestBadRequest(t *testing.T) {
 	router := utils.InitRouter(db)
 
 	// test data
+	token := utils.GenerateToken(t, "admin")
 	cases := []map[string]interface{}{
 		{
 			"tag_ids":   []int64{1, 2, 3},
@@ -146,6 +150,7 @@ func TestBadRequest(t *testing.T) {
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", "/banner", bytes.NewBuffer(requestBodyBytes))
+		utils.SetAuthToken(req, token)
 		router.ServeHTTP(w, req)
 
 		// check status
@@ -165,7 +170,7 @@ func TestBadRequest(t *testing.T) {
 	}
 }
 
-func TestFeatureTagAlreadyExists(t *testing.T) {
+func TestFeatureTagAlreadyExistsCreate(t *testing.T) {
 	// init db
 	db, err := psql.SetUp()
 	if err != nil {
@@ -185,6 +190,8 @@ func TestFeatureTagAlreadyExists(t *testing.T) {
 		content    = models.BannerContent{"title": "example"}
 		contentStr = "{\"title\": \"example\"}"
 		isAcive    = true
+
+		token = utils.GenerateToken(t, "admin")
 	)
 
 	// init db data
@@ -207,6 +214,7 @@ func TestFeatureTagAlreadyExists(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/banner", bytes.NewBuffer(requestBodyBytes))
+	utils.SetAuthToken(req, token)
 	router.ServeHTTP(w, req)
 
 	// check status
@@ -222,5 +230,74 @@ func TestFeatureTagAlreadyExists(t *testing.T) {
 	dbFTBs, _ := utils.GetFeatureTagBanners(db)
 	if len(dbFTBs) != len(dbTagIDs) {
 		t.Fatalf("feature_tag_banner table must not have new rows, current - %+v", dbFTBs)
+	}
+}
+
+func TestUnauthorizedCreate(t *testing.T) {
+	// init db
+	db, err := psql.SetUp()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer psql.TearDown(db)
+
+	// init service
+	router := utils.InitRouter(db)
+
+	// test data
+	var (
+		featureId = int64(1)
+		tagIDs    = []int64{1, 2, 3}
+		content   = models.BannerContent{"title": "example"}
+		isAcive   = true
+	)
+
+	// create request
+	requestBody := buildRequestBody(featureId, tagIDs, content, isAcive)
+	requestBodyBytes, _ := json.Marshal(requestBody)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/banner", bytes.NewBuffer(requestBodyBytes))
+	router.ServeHTTP(w, req)
+
+	// check status
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("Status is not Unauthorized: %d", w.Code)
+	}
+}
+
+func TestForbiddenCreate(t *testing.T) {
+	// init db
+	db, err := psql.SetUp()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer psql.TearDown(db)
+
+	// init service
+	router := utils.InitRouter(db)
+
+	// test data
+	var (
+		featureId = int64(1)
+		tagIDs    = []int64{1, 2, 3}
+		content   = models.BannerContent{"title": "example"}
+		isAcive   = true
+
+		token = utils.GenerateToken(t, "user")
+	)
+
+	// create request
+	requestBody := buildRequestBody(featureId, tagIDs, content, isAcive)
+	requestBodyBytes, _ := json.Marshal(requestBody)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/banner", bytes.NewBuffer(requestBodyBytes))
+	utils.SetAuthToken(req, token)
+	router.ServeHTTP(w, req)
+
+	// check status
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("Status is not Forbidden: %d", w.Code)
 	}
 }
