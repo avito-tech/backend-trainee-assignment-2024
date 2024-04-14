@@ -20,6 +20,7 @@ type AdminBanner interface {
 	Create(banner models.CreateBanner) (int64, error)
 	GetAll(featureId, tagId, limit, offset *int64) ([]models.Banner, error)
 	Update(bannerId int64, banner models.UpdateBanner) error
+	Delete(bannerId int64) error
 }
 
 type Service struct {

@@ -248,3 +248,57 @@ func (s *AdminBannerService) Update(bannerId int64, banner models.UpdateBanner) 
 
 	return nil
 }
+
+func (s *AdminBannerService) Delete(bannerId int64) error {
+	tx, err := s.db.Beginx()
+	if err != nil {
+		return fmt.Errorf("error starting transaction: %w", err)
+	}
+
+	_, err = s.bannerRepo.GetById(tx, bannerId)
+	if err != nil {
+		logrus.Warningf("Error get banner, rollback: %s", err.Error())
+
+		if err := tx.Rollback(); err != nil {
+			logrus.Errorf("Error rollback transaction: %s", err.Error())
+			return err
+		}
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrBannerNotFound
+		}
+
+		return err
+	}
+
+	err = s.featureTagBanner.DeleteByBannerId(tx, bannerId)
+	if err != nil {
+		logrus.Errorf("Error delete feature tag banner, rollback: %s", err.Error())
+
+		if err := tx.Rollback(); err != nil {
+			logrus.Errorf("Error rollback transaction: %s", err.Error())
+			return err
+		}
+
+		return err
+	}
+
+	err = s.bannerRepo.Delete(tx, bannerId)
+	if err != nil {
+		logrus.Errorf("Error delete banner, rollback: %s", err.Error())
+
+		if err := tx.Rollback(); err != nil {
+			logrus.Errorf("Error rollback transaction: %s", err.Error())
+			return err
+		}
+
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		logrus.Errorf("Error commit transaction: %s", err.Error())
+		return err
+	}
+
+	return nil
+}

@@ -71,7 +71,6 @@ func (r *FeatureTagBannerPostgres) DeleteByBannerId(tx *sqlx.Tx, bannerId int64)
 		delete from feature_tag_banner 
 		where banner_id = $1
 	`
-
 	_, err := tx.Exec(query, bannerId)
 	if err != nil {
 		return fmt.Errorf("error ftb.Delete: %w", err)

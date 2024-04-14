@@ -145,5 +145,21 @@ func (h *Handler) UpdateBanner(c *gin.Context) {
 //	@Failure		500	{object}	models.ErrorResp	"Internal Error"
 //	@Router			/banner/{id} [delete]
 func (h *Handler) DeleteBanner(c *gin.Context) {
+	bannerId, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid banner id")
+		return
+	}
+
+	err = h.services.Delete(bannerId)
+	if err != nil {
+		if errors.Is(err, service.ErrBannerNotFound) {
+			newErrorResponse(c, http.StatusNotFound, err.Error())
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	c.Status(http.StatusNoContent)
 }

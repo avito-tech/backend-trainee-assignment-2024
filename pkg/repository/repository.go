@@ -12,6 +12,7 @@ type Banner interface {
 	Create(tx *sqlx.Tx, content models.BannerContent, isActive bool) (int64, error)
 	Update(tx *sqlx.Tx, banner models.DBBanner) error
 	GetByFeatureIdTagId(db *sqlx.DB, featureId int64, tagId int64) (models.DBBanner, error)
+	Delete(tx *sqlx.Tx, bannerId int64) error
 }
 
 type FeatureTagBanner interface {

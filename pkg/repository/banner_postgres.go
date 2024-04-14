@@ -93,3 +93,15 @@ func (r *BannerPostgres) GetByFeatureIdTagId(db *sqlx.DB, featureId int64, tagId
 	}
 	return banner, err
 }
+
+func (r *BannerPostgres) Delete(tx *sqlx.Tx, bannerId int64) error {
+	query := `
+		delete from banner
+		where id = $1
+	`
+	_, err := tx.Exec(query, bannerId)
+	if err != nil {
+		return fmt.Errorf("error b.Delete: %w", err)
+	}
+	return nil
+}
