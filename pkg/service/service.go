@@ -8,7 +8,7 @@ import (
 )
 
 type UserBanner interface {
-	Get(tagId int, featureId int, useLastRevision bool) (models.BannerContent, error)
+	Get(featureId int64, tagId int64, isAdmin bool, useLastRevision bool) (models.BannerContent, error)
 }
 
 type AdminBanner interface {
@@ -18,13 +18,13 @@ type AdminBanner interface {
 }
 
 type Service struct {
-	// UserBanner
+	UserBanner
 	AdminBanner
 }
 
 func NewService(db *sqlx.DB, repos *repository.Repository) *Service {
 	return &Service{
-		// UserBanner:  NewAuthService(repos.Authorization),
+		UserBanner:  NewUserBannerService(db, repos.Banner),
 		AdminBanner: NewAdminBannerService(db, repos.Banner, repos.FeatureTagBanner),
 	}
 }

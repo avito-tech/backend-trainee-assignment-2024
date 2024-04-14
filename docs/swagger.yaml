@@ -1,0 +1,303 @@
+definitions:
+  models.Banner:
+    properties:
+      banner_id:
+        type: integer
+      content:
+        $ref: '#/definitions/models.BannerContent'
+      created_at:
+        example: 2023-09-21T15:30:15:00Z
+        type: string
+      feature_id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        type: array
+      updated_at:
+        format: date-time
+        type: string
+    required:
+    - created_at
+    type: object
+  models.BannerContent:
+    additionalProperties: true
+    type: object
+  models.BannerPostResp201:
+    properties:
+      banner_id:
+        type: integer
+    type: object
+  models.CreateBanner:
+    properties:
+      content:
+        $ref: '#/definitions/models.BannerContent'
+      feature_id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        minItems: 1
+        type: array
+    required:
+    - content
+    - feature_id
+    - is_active
+    - tag_ids
+    type: object
+  models.ErrorResp:
+    properties:
+      error:
+        type: string
+    type: object
+  models.UpdateBanner:
+    properties:
+      content:
+        $ref: '#/definitions/models.BannerContent'
+      feature_id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+info:
+  contact: {}
+  title: GTA2024 API
+  version: "1.0"
+paths:
+  /banner:
+    get:
+      consumes:
+      - application/json
+      description: Get banners
+      parameters:
+      - description: Идентификатор фичи
+        in: query
+        name: feature_id
+        type: integer
+      - description: Идентификатор тега
+        in: query
+        name: tag_id
+        type: integer
+      - description: Лимит
+        in: query
+        name: limit
+        type: integer
+      - description: Оффсет
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Banner'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Получение всех баннеров c фильтрацией по фиче и/или тегу
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Create banner
+      parameters:
+      - description: CreateBanner
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateBanner'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BannerPostResp201'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Создание нового баннера
+      tags:
+      - admin
+  /banner/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete banner
+      parameters:
+      - description: Идентификатор баннера
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Success Response
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Удаление баннера по идентификатору
+      tags:
+      - admin
+    patch:
+      consumes:
+      - application/json
+      description: Update banner
+      parameters:
+      - description: Идентификатор баннера
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: UpdateBanner
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateBanner'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Обновление содержимого баннера
+      tags:
+      - admin
+  /user_banner:
+    get:
+      consumes:
+      - application/json
+      description: Get user banners
+      parameters:
+      - description: Тэг пользователя
+        in: query
+        name: tag_id
+        required: true
+        type: integer
+      - description: Идентификатор фичи
+        in: query
+        name: feature_id
+        required: true
+        type: integer
+      - description: Получать актуальную информацию
+        in: query
+        name: use_last_revision
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+        "500":
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/models.ErrorResp'
+      summary: Получение баннера для пользователя
+      tags:
+      - user
+swagger: "2.0"

@@ -27,7 +27,6 @@ func (r *BannerPostgres) GetById(tx *sqlx.Tx, bannerId int64) (models.DBBanner, 
 		return banner, fmt.Errorf("error b.GetById: %w", err)
 	}
 	return banner, err
-
 }
 
 func (r *BannerPostgres) GetByIds(db *sqlx.DB, bannerIds []int64) ([]models.DBBanner, error) {
@@ -79,4 +78,18 @@ func (r *BannerPostgres) Update(tx *sqlx.Tx, banner models.DBBanner) error {
 		return fmt.Errorf("error update banner: %w", err)
 	}
 	return nil
+}
+
+func (r *BannerPostgres) GetByFeatureIdTagId(db *sqlx.DB, featureId int64, tagId int64) (models.DBBanner, error) {
+	query := `
+		select b.id, b.content, b.is_active, b.created_at, b.updated_at from banner b
+		join feature_tag_banner ftb on ftb.banner_id = b.id
+		where ftb.feature_id = $1 and ftb.tag_id = $2
+	`
+	banner := models.DBBanner{}
+	err := db.QueryRowx(query, featureId, tagId).StructScan(&banner)
+	if err != nil {
+		return banner, fmt.Errorf("error b.GetByFeatureIdTagId: %w", err)
+	}
+	return banner, err
 }

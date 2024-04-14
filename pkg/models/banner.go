@@ -27,8 +27,8 @@ type (
 		FeatureID int64         `json:"feature_id"`
 		Content   BannerContent `json:"content"`
 		IsActive  bool          `json:"is_active"`
-		CreatedAt time.Time     `json:"created_at"`
-		UpdatedAt time.Time     `json:"updated_at"`
+		CreatedAt time.Time     `json:"created_at" format:"date-time"`
+		UpdatedAt time.Time     `json:"updated_at" format:"date-time"`
 	}
 
 	CreateBanner struct {
